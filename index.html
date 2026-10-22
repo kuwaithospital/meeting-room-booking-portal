@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Book a Meeting Room – Kuwait Hospital</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+  <style>
+    :root {
+      --blue:#0D2D6B; --blue-mid:#1A3A7A; --blue-soft:#dce8f7;
+      --ink:#16233b; --sub:#44506a; --muted:#6b7896; --line:#c8d8ee;
+      --bg:#e8eef7; --card:#ffffff; --field:#EBF2FB;
+      --ok:#127a3e; --err:#b42318;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --blue:#4a90d9; --blue-mid:#5ba0e8; --blue-soft:#1a2e48;
+        --ink:#e8edf5; --sub:#a8b4c8; --muted:#7a8aa0; --line:#2a3a52;
+        --bg:#0d1520; --card:#141e2e; --field:#1a2438; color-scheme:dark;
+      }
+    }
+    :root[data-theme="dark"] {
+      --blue:#4a90d9; --blue-mid:#5ba0e8; --blue-soft:#1a2e48;
+      --ink:#e8edf5; --sub:#a8b4c8; --muted:#7a8aa0; --line:#2a3a52;
+      --bg:#0d1520; --card:#141e2e; --field:#1a2438; color-scheme:dark;
+    }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    body {
+      background:var(--bg); color:var(--ink);
+      font-family:'Inter',system-ui,-apple-system,sans-serif;
+      font-size:13.5px; line-height:1.45;
+      padding-left:max(16px,env(safe-area-inset-left,0px));
+      padding-right:max(16px,env(safe-area-inset-right,0px));
+      padding-block:0; min-height:100%;
+    }
+
+    /* Header */
+    .band {
+      position:sticky; top:env(safe-area-inset-top,0px); z-index:30;
+      background:var(--blue); color:#fff;
+      padding:8px max(16px,env(safe-area-inset-left,0px));
+      box-shadow:0 2px 12px rgba(8,40,80,.3);
+      margin-left:calc(-1 * max(16px,env(safe-area-inset-left,0px)));
+      margin-right:calc(-1 * max(16px,env(safe-area-inset-right,0px)));
+    }
+    .band-in { max-width:1280px; margin:0 auto; display:flex; align-items:center; gap:14px; }
+    .logo-box {
+      height:46px; background:#fff; border-radius:7px;
+      display:flex; align-items:center; justify-content:center; flex:none; padding:5px 8px;
+    }
+    .logo-box img { height:36px; width:auto; display:block; }
+    h1 { font-size:19px; font-weight:600; letter-spacing:-.2px; }
+    .live-clock {
+      margin-left:auto; text-align:right; flex-shrink:0;
+      line-height:1.3;
+    }
+    .live-clock .clk-time {
+      font-size:22px; font-weight:700; letter-spacing:.06em; color:#fff;
+    }
+    .live-clock .clk-date {
+      font-size:12px; color:rgba(255,255,255,.72); font-weight:400;
+    }
+
+    /* Main */
+    main { max-width:1280px; margin:14px auto 20px; }
+    .card {
+      background:var(--card); border:1px solid var(--line);
+      border-radius:16px; padding:24px 32px 20px;
+      box-shadow:0 4px 24px rgba(11,74,143,.08);
+    }
+    .req-note { font-size:12px; color:var(--muted); margin-bottom:14px; }
+    .req-note b { color:var(--err); }
+
+    /* 4-zone grid */
+    .cols { display:grid; grid-template-columns:1fr 1fr; grid-template-rows:auto auto; gap:0 36px; }
+    .col { display:flex; flex-direction:column; min-width:0; }
+    .col-tl { grid-column:1; grid-row:1; }
+    .col-tr { grid-column:2; grid-row:1; }
+    .col-bl { grid-column:1; grid-row:2; }
+    .col-br { grid-column:2; grid-row:2; }
+
+    /* Section heading */
+    .sec {
+      font-size:10.5px; font-weight:700; letter-spacing:1.4px;
+      text-transform:uppercase; color:var(--blue);
+      border-bottom:2px solid var(--blue-soft);
+      padding-bottom:5px; margin:14px 0 10px;
+    }
+    .col-tl .sec:first-child,
+    .col-tr .sec:first-child { margin-top:0; }
+
+    /* Fields */
+    .row2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:9px; }
+    .row1 { margin-bottom:9px; }
+    label, .lbl { font-size:12px; color:var(--sub); font-weight:500; display:block; margin-bottom:4px; }
+    .req-mark::after { content:" *"; color:var(--err); font-weight:600; }
+
+    input[type=text],input[type=email],input[type=tel],input[type=number],select,textarea {
+      width:100%; padding:7px 10px;
+      border:1.5px solid var(--line); border-radius:7px;
+      font:inherit; color:var(--ink); background:var(--field);
+      transition:border-color .15s,box-shadow .15s;
+      appearance:none; -webkit-appearance:none;
+    }
+    input:focus,select:focus,textarea:focus {
+      outline:none; border-color:var(--blue-mid);
+      box-shadow:0 0 0 3px rgba(11,74,143,.12); background:var(--card);
+    }
+    .sw { position:relative; }
+    .sw select { padding-right:30px; cursor:pointer; }
+    .sw::after {
+      content:""; pointer-events:none; position:absolute; right:11px; top:50%; transform:translateY(-50%);
+      width:0; height:0; border-left:4px solid transparent; border-right:4px solid transparent; border-top:5px solid var(--muted);
+    }
+    .hint { font-size:11px; color:var(--muted); margin-top:3px; min-height:1em; }
+
+    /* Date / time row */
+    .dt-row { display:grid; grid-template-columns:1.35fr 1fr 1fr; gap:8px; }
+    .sublbl { font-size:11px; color:var(--muted); font-weight:500; margin-bottom:4px; }
+    .date-btn {
+      width:100%; display:flex; align-items:center; justify-content:space-between;
+      padding:7px 10px; border:1.5px solid var(--line); border-radius:7px;
+      background:var(--field); color:var(--muted); font:inherit; cursor:pointer;
+      transition:border-color .15s,box-shadow .15s;
+    }
+    .date-btn.filled { color:var(--ink); }
+    .date-btn:focus { outline:none; border-color:var(--blue-mid); box-shadow:0 0 0 3px rgba(11,74,143,.12); background:var(--card); }
+    .date-btn .ico { width:16px; height:16px; flex:none; opacity:.45; }
+
+    /* Fieldsets */
+    .fsets { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    fieldset { border:none; padding:0; margin:0; min-width:0; background:none; }
+    .fset-lbl { font-size:12px; color:var(--sub); font-weight:600; margin-bottom:4px; display:block; }
+    .fset-lbl small { color:var(--muted); font-weight:400; }
+    .fset-box { border:1.5px solid var(--line); border-radius:9px; padding:9px 11px 11px; background:var(--field); }
+    .checks { display:grid; grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); gap:7px 8px; margin-top:7px; }
+    .check { display:flex; align-items:center; gap:7px; font-size:12.5px; color:var(--ink); cursor:pointer; }
+    .check input[type=checkbox] {
+      width:15px; height:15px; flex:none; cursor:pointer;
+      accent-color:var(--blue); appearance:auto; -webkit-appearance:auto;
+      border:1.5px solid var(--line); border-radius:3px;
+    }
+    .food-extra { margin-top:8px; }
+
+    /* Bottom bar */
+    .bottom {
+      display:grid; grid-template-columns:auto 1fr auto;
+      gap:14px; align-items:end;
+      border-top:1px solid var(--line); margin-top:12px; padding-top:12px;
+    }
+    .priv-block { padding-bottom:0; }
+    .priv-lbl { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:500; cursor:pointer; }
+    .priv-lbl input[type=checkbox] {
+      width:15px; height:15px; flex:none; cursor:pointer;
+      accent-color:var(--blue); appearance:auto; -webkit-appearance:auto;
+    }
+    .priv-desc { font-size:11px; color:var(--muted); margin:5px 0 0 23px; line-height:1.55; }
+
+    .notes-block { display:flex; flex-direction:column; gap:4px; }
+    .notes-block label { color:var(--sub); }
+    textarea#notes { resize:vertical; min-height:52px; display:block; }
+
+    .send-block { display:flex; align-items:flex-end; }
+    .send-btn {
+      padding:0 28px; border:0; border-radius:8px;
+      background:var(--blue); color:#fff; font:600 14px/1 inherit;
+      cursor:pointer; white-space:nowrap;
+      height:52px;
+      box-shadow:0 2px 10px rgba(11,74,143,.28);
+      transition:background .15s,box-shadow .15s;
+    }
+    .send-btn:hover { background:var(--blue-mid); box-shadow:0 4px 14px rgba(11,74,143,.36); }
+    .send-btn:focus-visible { outline:3px solid var(--blue-soft); outline-offset:2px; }
+    .send-btn:disabled { opacity:.55; cursor:not-allowed; }
+
+    /* Status message */
+    #msg {
+      margin-top:10px; padding:10px 14px; border-radius:8px;
+      font-size:13px; display:none; line-height:1.5;
+    }
+    #msg.ok  { background:#dcfce7; color:var(--ok); display:block; }
+    #msg.err { background:#fee2e2; color:var(--err); display:block; }
+    #msg.inf { background:var(--blue-soft); color:var(--blue); display:block; }
+
+    /* Spinner */
+    .spin { display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,.4);
+            border-top-color:#fff; border-radius:50%; animation:spin .6s linear infinite; vertical-align:middle; margin-right:6px; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    /* ── Confirmation overlay ── */
+    #conf-overlay {
+      position:fixed; inset:0; z-index:100;
+      background:var(--bg);
+      display:flex; align-items:center; justify-content:center;
+      padding:24px;
+      opacity:0; pointer-events:none;
+      transition:opacity .35s ease;
+    }
+    #conf-overlay.show { opacity:1; pointer-events:all; }
+    .conf-card {
+      background:var(--card);
+      border-radius:18px;
+      max-width:480px; width:100%;
+      overflow:hidden;
+      box-shadow:0 8px 40px rgba(13,45,107,.18);
+      transform:translateY(30px) scale(.97);
+      transition:transform .4s cubic-bezier(.22,1,.36,1);
+    }
+    #conf-overlay.show .conf-card { transform:translateY(0) scale(1); }
+
+    /* circle + checkmark */
+    .conf-hero {
+      background:linear-gradient(135deg,#0D2D6B 0%,#1a56db 100%);
+      padding:40px 28px 32px;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .conf-hero::before {
+      content:'';
+      position:absolute; inset:0;
+      background:radial-gradient(circle at 70% 30%, rgba(255,255,255,.08) 0%, transparent 60%);
+    }
+    .conf-circle {
+      width:80px; height:80px;
+      border-radius:50%;
+      background:rgba(255,255,255,.15);
+      border:3px solid rgba(255,255,255,.4);
+      display:flex; align-items:center; justify-content:center;
+      margin:0 auto 16px;
+      transform:scale(0);
+      transition:transform .45s cubic-bezier(.34,1.56,.64,1) .25s;
+    }
+    #conf-overlay.show .conf-circle { transform:scale(1); }
+    .conf-check {
+      font-size:36px; color:#fff;
+      opacity:0;
+      transform:scale(.5);
+      transition:opacity .3s ease .6s, transform .3s cubic-bezier(.34,1.56,.64,1) .6s;
+    }
+    #conf-overlay.show .conf-check { opacity:1; transform:scale(1); }
+    .conf-title {
+      color:#fff; font-size:22px; font-weight:700;
+      margin-bottom:6px; position:relative;
+    }
+    .conf-subtitle { color:rgba(255,255,255,.75); font-size:13px; position:relative; }
+
+    /* ref badge */
+    .conf-ref {
+      margin:0 28px;
+      background:linear-gradient(90deg,#0D2D6B,#1a56db);
+      border-radius:10px;
+      padding:10px 18px;
+      display:flex; align-items:center; justify-content:space-between;
+      margin-top:-18px; position:relative; z-index:2;
+      transform:translateY(20px); opacity:0;
+      transition:transform .4s ease .5s, opacity .4s ease .5s;
+    }
+    #conf-overlay.show .conf-ref { transform:translateY(0); opacity:1; }
+    .conf-ref-label { color:rgba(255,255,255,.7); font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; }
+    .conf-ref-id { color:#fff; font-size:14px; font-weight:700; letter-spacing:.04em; }
+
+    /* details */
+    .conf-details {
+      padding:24px 28px 10px;
+    }
+    .conf-row {
+      display:flex; align-items:flex-start; gap:12px;
+      padding:10px 0; border-bottom:1px solid var(--line);
+      opacity:0; transform:translateX(-14px);
+      transition:opacity .3s ease, transform .3s ease;
+    }
+    .conf-row:last-child { border-bottom:none; }
+    #conf-overlay.show .conf-row:nth-child(1) { opacity:1; transform:none; transition-delay:.55s; }
+    #conf-overlay.show .conf-row:nth-child(2) { opacity:1; transform:none; transition-delay:.62s; }
+    #conf-overlay.show .conf-row:nth-child(3) { opacity:1; transform:none; transition-delay:.69s; }
+    #conf-overlay.show .conf-row:nth-child(4) { opacity:1; transform:none; transition-delay:.76s; }
+    .conf-icon {
+      width:34px; height:34px; border-radius:8px;
+      background:var(--blue-soft);
+      display:flex; align-items:center; justify-content:center;
+      font-size:16px; flex-shrink:0;
+    }
+    .conf-row-label { font-size:11px; color:var(--muted); font-weight:500; margin-bottom:2px; }
+    .conf-row-val   { font-size:13.5px; color:var(--ink); font-weight:600; }
+
+    /* email note */
+    .conf-email-note {
+      margin:4px 28px 24px;
+      background:var(--blue-soft);
+      border-radius:8px;
+      padding:10px 14px;
+      font-size:12px; color:var(--sub);
+      text-align:center;
+      opacity:0;
+      transition:opacity .4s ease .9s;
+    }
+    #conf-overlay.show .conf-email-note { opacity:1; }
+
+    /* new booking button */
+    .conf-btn {
+      display:block;
+      margin:0 28px 28px;
+      background:var(--blue);
+      color:#fff; border:none;
+      border-radius:10px; padding:13px;
+      font:600 14px 'Inter',sans-serif;
+      cursor:pointer; text-align:center;
+      opacity:0;
+      transition:opacity .4s ease 1s, background .15s;
+    }
+    .conf-btn:hover { background:var(--blue-mid); }
+    #conf-overlay.show .conf-btn { opacity:1; }
+
+    /* floating particles */
+    .conf-particle {
+      position:absolute;
+      width:8px; height:8px;
+      border-radius:50%;
+      opacity:0;
+      animation:particle-fly 1.2s ease forwards;
+    }
+    @keyframes particle-fly {
+      0%   { opacity:1; transform:translate(0,0) scale(1); }
+      100% { opacity:0; transform:translate(var(--dx),var(--dy)) scale(0); }
+    }
+
+    /* Mobile */
+    @media (max-width:720px) {
+      .cols { grid-template-columns:1fr; }
+      .col-tl,.col-tr,.col-bl,.col-br { grid-column:1; grid-row:auto; }
+      .fsets,.row2,.dt-row,.checks,.bottom { grid-template-columns:1fr; }
+      h1 { font-size:16px; }
+      .send-block { justify-content:stretch; }
+      .send-btn { width:100%; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="band">
+  <div class="band-in">
+    <div class="logo-box"><img src="logo.png" alt="Kuwait Hospital"></div>
+    <h1>Book a Meeting Room</h1>
+    <div class="live-clock">
+      <div class="clk-time" id="clkTime">00:00:00</div>
+      <div class="clk-date" id="clkDate"></div>
+    </div>
+  </div>
+</header>
+<script>
+(function(){
+  var days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  function tick(){
+    var n=new Date();
+    var h=String(n.getHours()).padStart(2,'0');
+    var m=String(n.getMinutes()).padStart(2,'0');
+    var s=String(n.getSeconds()).padStart(2,'0');
+    document.getElementById('clkTime').textContent=h+':'+m+':'+s;
+    document.getElementById('clkDate').textContent=days[n.getDay()]+', '+n.getDate()+' '+months[n.getMonth()]+' '+n.getFullYear();
+  }
+  tick(); setInterval(tick,1000);
+})();
+</script>
+
+<main>
+  <div class="card">
+    <p class="req-note">Fields marked <b>*</b> are required. Please use your hospital email address.</p>
+
+    <div class="cols">
+
+      <!-- TOP-LEFT: Requester Details -->
+      <div class="col col-tl">
+        <div class="sec">Requester Details</div>
+        <div class="row2">
+          <div>
+            <label for="name" class="req-mark">Your name</label>
+            <input type="text" id="name" placeholder="e.g. Fatima Al-Rashidi" autocomplete="name">
+          </div>
+          <div>
+            <label for="dept" class="req-mark">Department</label>
+            <input type="text" id="dept" placeholder="e.g. Cardiology">
+          </div>
+        </div>
+        <div class="row2">
+          <div>
+            <label for="email" class="req-mark">Hospital email</label>
+            <input type="email" id="email" placeholder="name@kuwaithospital.com.kw" autocomplete="email">
+          </div>
+          <div>
+            <label for="mobile">Mobile / extension</label>
+            <input type="tel" id="mobile" placeholder="e.g. 965 1234 5678">
+          </div>
+        </div>
+      </div>
+
+      <!-- TOP-RIGHT: Date & Time -->
+      <div class="col col-tr">
+        <div class="sec">Date &amp; Time</div>
+        <div class="row1">
+          <div class="lbl req-mark" style="margin-bottom:7px;">Select date and time</div>
+          <div class="dt-row">
+            <div>
+              <div class="sublbl">Date</div>
+              <button type="button" class="date-btn" id="dateBtn">
+                <span id="dateTxt">dd / mm / yyyy</span>
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+              </button>
+              <input type="date" id="dateInput" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;">
+            </div>
+            <div>
+              <div class="sublbl">Start</div>
+              <div class="sw">
+                <select id="startSel" disabled>
+                  <option value="">Select room first</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <div class="sublbl">End</div>
+              <div class="sw">
+                <select id="endSel" disabled>
+                  <option value="">Choose start first</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM-LEFT: Meeting Details -->
+      <div class="col col-bl">
+        <div class="sec">Meeting Details</div>
+        <div class="row2">
+          <div>
+            <label for="host" class="req-mark">Host / Organizer</label>
+            <input type="text" id="host" placeholder="e.g. Dr. Khalid Al-Rashidi">
+          </div>
+          <div>
+            <label for="title" class="req-mark">Meeting / Event title</label>
+            <input type="text" id="title" placeholder="e.g. Cardiology Review">
+          </div>
+        </div>
+        <div class="row2">
+          <div>
+            <label for="room" class="req-mark">Room</label>
+            <div class="sw">
+              <select id="room">
+                <option value="">Loading rooms…</option>
+              </select>
+            </div>
+            <span class="hint" id="roomHint"></span>
+          </div>
+          <div>
+            <label for="attendees" class="req-mark">Attendees</label>
+            <input type="number" id="attendees" min="1" max="500" placeholder="e.g. 8">
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM-RIGHT: Requirements & Extras -->
+      <div class="col col-br">
+        <div class="sec">Requirements &amp; Extras</div>
+        <div class="fsets">
+          <fieldset>
+            <span class="fset-lbl">IT requirements <small>– IT Support</small></span>
+            <div class="fset-box">
+              <div class="checks">
+                <label class="check"><input type="checkbox" name="it" value="Laptop"> Laptop</label>
+                <label class="check"><input type="checkbox" name="it" value="Projector"> Projector</label>
+                <label class="check"><input type="checkbox" name="it" value="Video conf."> Video conf.</label>
+                <label class="check"><input type="checkbox" name="it" value="Mic/Speakers"> Mic/Speakers</label>
+                <label class="check"><input type="checkbox" name="it" value="Whiteboard"> Whiteboard</label>
+                <label class="check"><input type="checkbox" name="it" value="Printer/Clicker"> Printer/Clicker</label>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset>
+            <span class="fset-lbl">Refreshments <small>– Hospitality</small></span>
+            <div class="fset-box">
+              <div class="checks">
+                <label class="check"><input type="checkbox" name="rf" value="Water"> Water</label>
+                <label class="check"><input type="checkbox" name="rf" value="Tea/Coffee"> Tea / Coffee</label>
+                <label class="check"><input type="checkbox" name="rf" value="Juice"> Juice</label>
+                <label class="check"><input type="checkbox" name="rf" value="Snacks"> Snacks</label>
+              </div>
+              <div class="food-extra">
+                <textarea id="rfOther" rows="2" placeholder="Other details (optional)" style="resize:vertical;min-height:36px;width:100%;"></textarea>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+
+    </div><!-- .cols -->
+
+    <!-- BOTTOM BAR -->
+    <div class="bottom">
+      <div class="priv-block">
+        <label class="priv-lbl">
+          <input type="checkbox" id="priv"> <strong>Private meeting</strong>
+        </label>
+        <p class="priv-desc">Room screen shows "Private meeting"<br>instead of the title and your name.</p>
+      </div>
+
+      <div class="notes-block">
+        <label for="notes">Notes</label>
+        <textarea id="notes" rows="2" placeholder="Any additional information for the approver…"></textarea>
+      </div>
+
+      <div class="send-block">
+        <button class="send-btn" id="sendBtn" type="button">Send booking request</button>
+      </div>
+    </div>
+
+    <div id="msg"></div>
+
+  </div><!-- .card -->
+</main>
+
+<script>
+// ── Config ────────────────────────────────────────────────────────
+var GAS_URL = 'https://script.google.com/macros/s/AKfycbwM9MzgGc_8xWvrqgB80MDjIGNCyrbj15OHZBYXPY1bEpLURpBDZOrqdfV-j-RESyBg/exec';
+
+var ROOMS_DATA = [];
+var HOURS_DATA = { start:'08:00', end:'17:00', step:30, maxHours:8, days:[0,1,2,3,4] };
+var selectedDate = '';
+
+// ── GAS call helper ───────────────────────────────────────────────
+function callGas(fn, args, ok, fail) {
+  var body = JSON.stringify({ fn: fn, args: args || [] });
+  fetch(GAS_URL, { method:'POST', body: body })
+    .then(function(r){ return r.json(); })
+    .then(function(d){ d.ok ? ok(d.data) : fail(d.error); })
+    .catch(function(e){ fail(e.message); });
+}
+
+// ── Load rooms on start ───────────────────────────────────────────
+callGas('getRooms', [], function(rooms) {
+  ROOMS_DATA = rooms;
+  var sel = document.getElementById('room');
+  sel.innerHTML = '<option value="">Select room</option>';
+  rooms.forEach(function(r) {
+    var opt = document.createElement('option');
+    opt.value = r.name;
+    opt.textContent = r.name + ' (' + r.location + ')';
+    sel.appendChild(opt);
+  });
+}, function(err) {
+  document.getElementById('room').innerHTML = '<option value="">Could not load rooms</option>';
+  console.warn('getRooms error:', err);
+});
+
+callGas('getHours', [], function(h) { HOURS_DATA = h; }, function(){});
+
+// ── Room change ───────────────────────────────────────────────────
+document.getElementById('room').addEventListener('change', function() {
+  var roomName = this.value;
+  var room = ROOMS_DATA.find(function(r){ return r.name === roomName; });
+  document.getElementById('roomHint').textContent = room
+    ? room.location + ' · needs approval'
+    : '';
+  refreshTimeSlots();
+});
+
+// ── Date picker ───────────────────────────────────────────────────
+document.getElementById('dateBtn').addEventListener('click', function() {
+  var di = document.getElementById('dateInput');
+  di.showPicker ? di.showPicker() : di.click();
+});
+
+document.getElementById('dateInput').addEventListener('change', function() {
+  if (!this.value) return;
+  selectedDate = this.value;
+  var parts = this.value.split('-');
+  var d = parts[2], m = parts[1], y = parts[0];
+  var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var dow = days[new Date(this.value).getDay()];
+  document.getElementById('dateTxt').textContent = d + ' / ' + m + ' / ' + y + '  (' + dow + ')';
+  document.getElementById('dateBtn').classList.add('filled');
+  refreshTimeSlots();
+});
+
+// ── Time slots ────────────────────────────────────────────────────
+function ymd(dt) {
+  return dt.getFullYear() + '-' +
+    String(dt.getMonth()+1).padStart(2,'0') + '-' +
+    String(dt.getDate()).padStart(2,'0');
+}
+
+function refreshTimeSlots() {
+  var roomName = document.getElementById('room').value;
+  var startSel = document.getElementById('startSel');
+  var endSel   = document.getElementById('endSel');
+
+  startSel.innerHTML = '<option value="">Loading…</option>';
+  startSel.disabled = true;
+  endSel.innerHTML  = '<option value="">Choose start first</option>';
+  endSel.disabled   = true;
+
+  if (!roomName || !selectedDate) {
+    startSel.innerHTML = '<option value="">Select room &amp; date first</option>';
+    return;
+  }
+
+  // Past-date guard
+  var todayIso = ymd(new Date());
+  if (selectedDate < todayIso) {
+    say('The selected date is in the past. Please choose today or a future date.', 'err');
+    startSel.innerHTML = '<option value="">Select a valid date first</option>';
+    return;
+  }
+
+  callGas('getBusy', [roomName, selectedDate], function(busy) {
+    var h = HOURS_DATA;
+    var step = h.step || 30;
+    var times = [];
+    var cur = timeToMin(h.start);
+    var end = timeToMin(h.end);
+    while (cur <= end) { times.push(minToTime(cur)); cur += step; }
+
+    startSel.innerHTML = '<option value="">Select start time</option>';
+    times.forEach(function(t) {
+      var blocked = busy.some(function(b) {
+        return timeToMin(t) >= timeToMin(b.start) && timeToMin(t) < timeToMin(b.end);
+      });
+      if (!blocked) {
+        var opt = document.createElement('option');
+        opt.value = t; opt.textContent = t;
+        startSel.appendChild(opt);
+      }
+    });
+    startSel.disabled = false;
+  }, function(err) {
+    startSel.innerHTML = '<option value="">Error loading slots</option>';
+    console.warn('getBusy error:', err);
+  });
+}
+
+document.getElementById('startSel').addEventListener('change', function() {
+  var endSel = document.getElementById('endSel');
+  var startMin = timeToMin(this.value);
+  if (!this.value) { endSel.disabled = true; endSel.innerHTML = '<option value="">Choose start first</option>'; return; }
+
+  var h = HOURS_DATA;
+  var step = h.step || 30;
+  var maxMin = h.maxHours ? startMin + h.maxHours * 60 : 9999;
+  var endLimit = timeToMin(h.end);
+
+  endSel.innerHTML = '<option value="">Select end time</option>';
+  var t = startMin + step;
+  var i = 1;
+  while (t <= endLimit && t <= maxMin) {
+    var mins = i * step;
+    var label = minToTime(t) + '  (' + (mins >= 60 ? Math.floor(mins/60) + ' h' + (mins % 60 ? ' 30 min' : '') : mins + ' min') + ')';
+    endSel.add(new Option(label, minToTime(t)));
+    t += step; i++;
+  }
+  endSel.disabled = false;
+});
+
+// ── Submit ────────────────────────────────────────────────────────
+document.getElementById('sendBtn').addEventListener('click', function() {
+  var name      = v('name');
+  var dept      = v('dept');
+  var email     = v('email');
+  var mobile    = v('mobile');
+  var host      = v('host');
+  var title     = v('title');
+  var roomName  = v('room');
+  var attendees = v('attendees');
+  var notes     = v('notes');
+  var priv      = document.getElementById('priv').checked;
+
+  // Validation
+  if (!name)      return say('Please enter your name.', 'err');
+  if (!dept)      return say('Please enter your department.', 'err');
+  if (!email)     return say('Please enter your hospital email address.', 'err');
+  if (!email.toLowerCase().endsWith('@kuwaithospital.com.kw'))
+                  return say('Please use your hospital email address (@kuwaithospital.com.kw).', 'err');
+  if (!host)      return say('Please enter the host / organizer name.', 'err');
+  if (!title)     return say('Please enter a meeting title.', 'err');
+  if (!roomName)  return say('Please select a room.', 'err');
+  if (!attendees) return say('Please enter the number of attendees.', 'err');
+  if (!selectedDate) return say('Please select a date.', 'err');
+
+  var todayIso = ymd(new Date());
+  if (selectedDate < todayIso) return say('The selected date is in the past. Please choose today or a future date.', 'err');
+
+  if (!document.getElementById('startSel').value) return say('Please select a start time.', 'err');
+  if (!document.getElementById('endSel').value)   return say('Please select an end time.', 'err');
+
+  // Collect checkboxes
+  var itChecks = Array.from(document.querySelectorAll('input[name="it"]:checked')).map(function(c){ return c.value; });
+  var rfChecks = Array.from(document.querySelectorAll('input[name="rf"]:checked')).map(function(c){ return c.value; });
+  var rfOther  = v('rfOther');
+  if (rfOther) rfChecks.push(rfOther);
+
+  var data = {
+    name:      name,
+    dept:      dept,
+    email:     email,
+    mobile:    mobile,
+    host:      host,
+    title:     title,
+    room:      roomName,
+    date:      selectedDate,
+    start:     document.getElementById('startSel').value,
+    end:       document.getElementById('endSel').value,
+    attendees: attendees,
+    needs:     itChecks.join(', ') || '',
+    refresh:   rfChecks.join(', ') || '',
+    priv:      priv,
+    notes:     notes
+  };
+
+  var btn = document.getElementById('sendBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span>Sending…';
+  say('Submitting your booking request…', 'inf');
+
+  callGas('submitBooking', [data], function(result) {
+    btn.disabled = false;
+    btn.textContent = 'Send booking request';
+    showConfirmation(result, email);
+  }, function(err) {
+    btn.disabled = false;
+    btn.textContent = 'Send booking request';
+    say('Could not submit booking: ' + err, 'err');
+  });
+});
+
+// ── Helpers ───────────────────────────────────────────────────────
+function v(id) { return document.getElementById(id).value.trim(); }
+function say(html, type) {
+  var el = document.getElementById('msg');
+  el.innerHTML = html;
+  el.className = type;
+  el.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+function timeToMin(t) { if (!t) return 0; var p = t.split(':'); return parseInt(p[0]) * 60 + parseInt(p[1]); }
+function minToTime(m) { return String(Math.floor(m/60)).padStart(2,'0') + ':' + String(m%60).padStart(2,'0'); }
+</script>
+
+<!-- ── Confirmation Overlay ── -->
+<div id="conf-overlay">
+  <div class="conf-card">
+    <div class="conf-hero" id="conf-hero">
+      <div class="conf-circle"><span class="conf-check">✓</span></div>
+      <div class="conf-title">Booking Submitted!</div>
+      <div class="conf-subtitle">Your request is pending coordinator approval</div>
+    </div>
+    <div class="conf-ref">
+      <div>
+        <div class="conf-ref-label">Reference Number</div>
+        <div class="conf-ref-id" id="conf-id">—</div>
+      </div>
+      <div style="color:rgba(255,255,255,.5);font-size:22px">🎫</div>
+    </div>
+    <div class="conf-details">
+      <div class="conf-row">
+        <div class="conf-icon">🏢</div>
+        <div><div class="conf-row-label">Room</div><div class="conf-row-val" id="conf-room">—</div></div>
+      </div>
+      <div class="conf-row">
+        <div class="conf-icon">📅</div>
+        <div><div class="conf-row-label">Date &amp; Time</div><div class="conf-row-val" id="conf-when">—</div></div>
+      </div>
+      <div class="conf-row">
+        <div class="conf-icon">👤</div>
+        <div><div class="conf-row-label">Requested by</div><div class="conf-row-val" id="conf-name">—</div></div>
+      </div>
+      <div class="conf-row">
+        <div class="conf-icon">⏳</div>
+        <div><div class="conf-row-label">Status</div><div class="conf-row-val" style="color:#d97706">Pending Approval</div></div>
+      </div>
+    </div>
+    <div class="conf-email-note" id="conf-email-note">📧 A confirmation email has been sent to your inbox</div>
+    <button class="conf-btn" onclick="closeConfirmation()">＋ Submit Another Booking</button>
+  </div>
+</div>
+
+<script>
+function showConfirmation(result, email) {
+  document.getElementById('conf-id').textContent   = result.id   || '—';
+  document.getElementById('conf-room').textContent = result.room || '—';
+  document.getElementById('conf-when').textContent = result.when || '—';
+  var nameEl = document.getElementById('name');
+  document.getElementById('conf-name').textContent = (nameEl ? nameEl.value : '') || '—';
+  document.getElementById('conf-email-note').textContent = '📧 A confirmation email has been sent to ' + email;
+
+  var overlay = document.getElementById('conf-overlay');
+  overlay.classList.add('show');
+  spawnParticles();
+}
+
+function closeConfirmation() {
+  var overlay = document.getElementById('conf-overlay');
+  overlay.classList.remove('show');
+  // reset form
+  var form = document.getElementById('bookingForm') || document.querySelector('form');
+  if (form) form.reset();
+  var msg = document.getElementById('msg');
+  if (msg) { msg.style.display='none'; msg.textContent=''; }
+  // reload rooms/hours
+  if (typeof loadRooms === 'function') loadRooms();
+}
+
+function spawnParticles() {
+  var hero = document.getElementById('conf-hero');
+  var colors = ['#60a5fa','#93c5fd','#bfdbfe','#ffffff','#fde68a','#6ee7b7'];
+  for (var i = 0; i < 18; i++) {
+    (function(i) {
+      setTimeout(function() {
+        var p = document.createElement('div');
+        p.className = 'conf-particle';
+        var angle = (i / 18) * 360;
+        var dist  = 50 + Math.random() * 80;
+        var dx = Math.cos(angle * Math.PI/180) * dist;
+        var dy = Math.sin(angle * Math.PI/180) * dist - 40;
+        p.style.cssText = 'left:50%;top:50%;background:' + colors[i % colors.length] +
+          ';--dx:' + dx + 'px;--dy:' + dy + 'px;animation-delay:' + (Math.random()*0.3) + 's';
+        hero.appendChild(p);
+        setTimeout(function(){ p.remove(); }, 1500);
+      }, i * 30);
+    })(i);
+  }
+}
+</script>
+</body>
+</html>
