@@ -487,8 +487,10 @@
       <!-- BOTTOM-RIGHT: Requirements & Extras -->
       <div class="col col-br" style="display:flex;flex-direction:column;">
         <div class="sec">Requirements &amp; Extras</div>
-        <div class="fsets" style="flex:1;min-height:0;">
-          <fieldset>
+        <div style="flex:1;display:flex;flex-direction:column;gap:5px;min-height:0;">
+
+          <!-- IT requirements -->
+          <div>
             <span class="fset-lbl">IT requirements <small>– IT Support</small></span>
             <div class="fset-box">
               <div class="checks">
@@ -500,8 +502,10 @@
                 <label class="check"><input type="checkbox" name="it" value="Printer/Clicker"> Printer/Clicker</label>
               </div>
             </div>
-          </fieldset>
-          <fieldset>
+          </div>
+
+          <!-- Refreshments -->
+          <div>
             <span class="fset-lbl">Refreshments <small>– Hospitality</small></span>
             <div class="fset-box">
               <div class="checks">
@@ -510,11 +514,15 @@
                 <label class="check"><input type="checkbox" name="rf" value="Juice"> Juice</label>
                 <label class="check"><input type="checkbox" name="rf" value="Snacks"> Snacks</label>
               </div>
-              <div class="food-extra">
-                <textarea id="rfOther" rows="1" placeholder="Other details (optional)" style="resize:none;height:30px;width:100%;"></textarea>
-              </div>
             </div>
-          </fieldset>
+          </div>
+
+          <!-- Other details shared textarea -->
+          <div style="flex:1;display:flex;flex-direction:column;">
+            <span class="fset-lbl">Other details <small>– optional</small></span>
+            <textarea id="rfOther" placeholder="Any extra requirements for IT or Hospitality…" style="resize:none;flex:1;min-height:24px;"></textarea>
+          </div>
+
         </div>
       </div>
 
