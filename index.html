@@ -53,15 +53,10 @@
     .logo-box img { height:28px; width:auto; display:block; }
     h1 { font-size:16px; font-weight:600; letter-spacing:-.2px; }
     .live-clock {
-      margin-left:auto; text-align:right; flex-shrink:0;
-      line-height:1.2;
+      margin-left:auto; text-align:right; flex-shrink:0; line-height:1.2;
     }
-    .live-clock .clk-time {
-      font-size:17px; font-weight:700; letter-spacing:.06em; color:#fff;
-    }
-    .live-clock .clk-date {
-      font-size:11px; color:rgba(255,255,255,.72); font-weight:400;
-    }
+    .live-clock .clk-time { font-size:17px; font-weight:700; letter-spacing:.06em; color:#fff; }
+    .live-clock .clk-date { font-size:11px; color:rgba(255,255,255,.72); font-weight:400; }
 
     /* Main */
     main { max-width:1280px; width:100%; margin:6px auto 0; flex:1; display:flex; flex-direction:column; overflow:hidden; }
@@ -69,41 +64,41 @@
       background:var(--card); border:1px solid var(--line);
       border-radius:12px; padding:10px 18px 8px;
       box-shadow:0 4px 24px rgba(11,74,143,.08);
-      flex:1; display:flex; flex-direction:column;
-      overflow:hidden;
+      flex:1; display:flex; flex-direction:column; overflow:hidden;
     }
     .footer-credit {
       text-align:center; padding:5px 0 2px;
-      font-size:11px; color:var(--muted); letter-spacing:.02em;
-      flex-shrink:0;
+      font-size:11px; color:var(--muted); letter-spacing:.02em; flex-shrink:0;
     }
     .footer-credit strong { color:var(--blue); font-weight:600; }
     .req-note { font-size:11px; color:var(--muted); margin-bottom:6px; flex-shrink:0; }
     .req-note b { color:var(--err); }
 
-    /* 4-zone grid — fills all remaining vertical space equally */
+    /* ── 4-quadrant grid ── */
     .cols {
-      display:grid; grid-template-columns:1fr 1fr; gap:0 22px;
-      flex:1; grid-template-rows:1fr 1fr; min-height:0;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      grid-template-rows:1fr 1fr;
+      gap:0 22px;
+      flex:1;
+      min-height:0;
     }
-    .col { display:flex; flex-direction:column; min-width:0; min-height:0; }
-    .col-tl { grid-column:1; grid-row:1; }
-    .col-tr { grid-column:2; grid-row:1; }
-    .col-bl { grid-column:1; grid-row:2; }
-    .col-br { grid-column:2; grid-row:2; }
+    /* left column: two halves stacked */
+    .col-tl { grid-column:1; grid-row:1; display:flex; flex-direction:column; min-width:0; min-height:0; padding-bottom:6px; border-bottom:1px solid var(--line); }
+    .col-bl { grid-column:1; grid-row:2; display:flex; flex-direction:column; min-width:0; min-height:0; padding-top:6px; }
+    /* right column: two halves stacked */
+    .col-tr { grid-column:2; grid-row:1; display:flex; flex-direction:column; min-width:0; min-height:0; padding-bottom:6px; border-bottom:1px solid var(--line); border-left:1px solid var(--line); padding-left:22px; }
+    .col-br { grid-column:2; grid-row:2; display:flex; flex-direction:column; min-width:0; min-height:0; padding-top:6px; border-left:1px solid var(--line); padding-left:22px; }
 
     /* Section heading */
     .sec {
       font-size:10px; font-weight:700; letter-spacing:1.3px;
       text-transform:uppercase; color:var(--blue);
       border-bottom:2px solid var(--blue-soft);
-      padding-bottom:2px; margin:5px 0 4px; flex-shrink:0;
+      padding-bottom:2px; margin:0 0 5px; flex-shrink:0;
     }
-    .col-tl .sec:first-child,
-    .col-tr .sec:first-child { margin-top:0; }
 
-    /* Fields — uniform input height */
-    --ih: 28px;
+    /* Fields */
     .row2 { display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-bottom:5px; }
     .row1 { margin-bottom:5px; }
     label, .lbl { font-size:11px; color:var(--sub); font-weight:500; display:block; margin-bottom:2px; }
@@ -121,7 +116,7 @@
       border:1.5px solid var(--line); border-radius:6px;
       font:inherit; color:var(--ink); background:var(--field);
       transition:border-color .15s,box-shadow .15s;
-      appearance:none; -webkit-appearance:none;
+      resize:none;
     }
     input:focus,select:focus,textarea:focus {
       outline:none; border-color:var(--blue-mid);
@@ -148,25 +143,24 @@
     .date-btn:focus { outline:none; border-color:var(--blue-mid); box-shadow:0 0 0 3px rgba(11,74,143,.12); background:var(--card); }
     .date-btn .ico { width:15px; height:15px; flex:none; opacity:.45; }
 
-    /* Fieldsets */
-    .fsets { display:grid; grid-template-columns:1fr 1fr; gap:6px; flex:1; min-height:0; }
-    fieldset { border:none; padding:0; margin:0; min-width:0; background:none; display:flex; flex-direction:column; }
+    /* Requirements fieldsets */
+    .fsets { display:flex; flex-direction:column; gap:5px; flex:1; min-height:0; overflow:hidden; }
+    .fset-item { display:flex; flex-direction:column; flex:1; min-height:0; }
     .fset-lbl { font-size:11px; color:var(--sub); font-weight:600; margin-bottom:3px; display:block; flex-shrink:0; }
     .fset-lbl small { color:var(--muted); font-weight:400; }
-    .fset-box { border:1.5px solid var(--line); border-radius:7px; padding:6px 9px; background:var(--field); flex:1; display:flex; flex-direction:column; }
-    .checks { display:grid; grid-template-columns:repeat(auto-fill,minmax(100px,1fr)); gap:4px 6px; }
+    .fset-box { border:1.5px solid var(--line); border-radius:7px; padding:6px 9px; background:var(--field); flex:1; display:flex; flex-direction:column; min-height:0; }
+    .checks { display:grid; grid-template-columns:repeat(auto-fill,minmax(100px,1fr)); gap:3px 6px; flex-shrink:0; margin-bottom:4px; }
     .check { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--ink); cursor:pointer; height:20px; }
     .check input[type=checkbox] {
       width:13px; height:13px; flex:none; cursor:pointer;
       accent-color:var(--blue); appearance:auto; -webkit-appearance:auto;
     }
-    .food-extra { margin-top:5px; flex:1; display:flex; flex-direction:column; }
-    .food-extra textarea { flex:1; resize:none; min-height:24px; }
+    .fset-box textarea { flex:1; min-height:22px; }
 
     /* Bottom bar */
     .bottom {
-      display:grid; grid-template-columns:auto 1fr auto;
-      gap:8px; align-items:end;
+      display:grid; grid-template-columns:auto auto 1fr auto;
+      gap:10px; align-items:end;
       border-top:1px solid var(--line); margin-top:5px; padding-top:5px;
       flex-shrink:0;
     }
@@ -180,7 +174,7 @@
 
     .notes-block { display:flex; flex-direction:column; gap:2px; }
     .notes-block label { color:var(--sub); }
-    textarea#notes { resize:none; height:36px; display:block; }
+    textarea#notes { height:36px; display:block; }
 
     .send-block { display:flex; align-items:flex-end; }
     .send-btn {
@@ -195,7 +189,7 @@
     .send-btn:focus-visible { outline:3px solid var(--blue-soft); outline-offset:2px; }
     .send-btn:disabled { opacity:.55; cursor:not-allowed; }
 
-    /* Status message — absolutely positioned so it doesn't push layout */
+    /* Status message */
     #msg {
       position:fixed; bottom:16px; left:50%; transform:translateX(-50%);
       padding:9px 18px; border-radius:8px; z-index:50;
@@ -212,7 +206,7 @@
             border-top-color:#fff; border-radius:50%; animation:spin .6s linear infinite; vertical-align:middle; margin-right:6px; }
     @keyframes spin { to { transform:rotate(360deg); } }
 
-    /* ── Confirmation overlay ── */
+    /* Confirmation overlay */
     #conf-overlay {
       position:fixed; inset:0; z-index:100;
       background:var(--bg);
@@ -223,59 +217,32 @@
     }
     #conf-overlay.show { opacity:1; pointer-events:all; }
     .conf-card {
-      background:var(--card);
-      border-radius:18px;
-      max-width:480px; width:100%;
-      overflow:hidden;
-      box-shadow:0 8px 40px rgba(13,45,107,.18);
+      background:var(--card); border-radius:18px; max-width:480px; width:100%;
+      overflow:hidden; box-shadow:0 8px 40px rgba(13,45,107,.18);
       transform:translateY(30px) scale(.97);
       transition:transform .4s cubic-bezier(.22,1,.36,1);
     }
     #conf-overlay.show .conf-card { transform:translateY(0) scale(1); }
-
-    /* circle + checkmark */
     .conf-hero {
       background:linear-gradient(135deg,#0D2D6B 0%,#1a56db 100%);
-      padding:40px 28px 32px;
-      text-align:center;
-      position:relative;
-      overflow:hidden;
+      padding:40px 28px 32px; text-align:center; position:relative; overflow:hidden;
     }
-    .conf-hero::before {
-      content:'';
-      position:absolute; inset:0;
-      background:radial-gradient(circle at 70% 30%, rgba(255,255,255,.08) 0%, transparent 60%);
-    }
+    .conf-hero::before { content:''; position:absolute; inset:0; background:radial-gradient(circle at 70% 30%, rgba(255,255,255,.08) 0%, transparent 60%); }
     .conf-circle {
-      width:80px; height:80px;
-      border-radius:50%;
-      background:rgba(255,255,255,.15);
-      border:3px solid rgba(255,255,255,.4);
+      width:80px; height:80px; border-radius:50%;
+      background:rgba(255,255,255,.15); border:3px solid rgba(255,255,255,.4);
       display:flex; align-items:center; justify-content:center;
-      margin:0 auto 16px;
-      transform:scale(0);
+      margin:0 auto 16px; transform:scale(0);
       transition:transform .45s cubic-bezier(.34,1.56,.64,1) .25s;
     }
     #conf-overlay.show .conf-circle { transform:scale(1); }
-    .conf-check {
-      font-size:36px; color:#fff;
-      opacity:0;
-      transform:scale(.5);
-      transition:opacity .3s ease .6s, transform .3s cubic-bezier(.34,1.56,.64,1) .6s;
-    }
+    .conf-check { font-size:36px; color:#fff; opacity:0; transform:scale(.5); transition:opacity .3s ease .6s, transform .3s cubic-bezier(.34,1.56,.64,1) .6s; }
     #conf-overlay.show .conf-check { opacity:1; transform:scale(1); }
-    .conf-title {
-      color:#fff; font-size:22px; font-weight:700;
-      margin-bottom:6px; position:relative;
-    }
+    .conf-title { color:#fff; font-size:22px; font-weight:700; margin-bottom:6px; position:relative; }
     .conf-subtitle { color:rgba(255,255,255,.75); font-size:13px; position:relative; }
-
-    /* ref badge */
     .conf-ref {
-      margin:0 28px;
-      background:linear-gradient(90deg,#0D2D6B,#1a56db);
-      border-radius:10px;
-      padding:10px 18px;
+      margin:0 28px; background:linear-gradient(90deg,#0D2D6B,#1a56db);
+      border-radius:10px; padding:10px 18px;
       display:flex; align-items:center; justify-content:space-between;
       margin-top:-18px; position:relative; z-index:2;
       transform:translateY(20px); opacity:0;
@@ -284,11 +251,7 @@
     #conf-overlay.show .conf-ref { transform:translateY(0); opacity:1; }
     .conf-ref-label { color:rgba(255,255,255,.7); font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; }
     .conf-ref-id { color:#fff; font-size:14px; font-weight:700; letter-spacing:.04em; }
-
-    /* details */
-    .conf-details {
-      padding:24px 28px 10px;
-    }
+    .conf-details { padding:24px 28px 10px; }
     .conf-row {
       display:flex; align-items:flex-start; gap:12px;
       padding:10px 0; border-bottom:1px solid var(--line);
@@ -300,61 +263,23 @@
     #conf-overlay.show .conf-row:nth-child(2) { opacity:1; transform:none; transition-delay:.62s; }
     #conf-overlay.show .conf-row:nth-child(3) { opacity:1; transform:none; transition-delay:.69s; }
     #conf-overlay.show .conf-row:nth-child(4) { opacity:1; transform:none; transition-delay:.76s; }
-    .conf-icon {
-      width:34px; height:34px; border-radius:8px;
-      background:var(--blue-soft);
-      display:flex; align-items:center; justify-content:center;
-      font-size:16px; flex-shrink:0;
-    }
+    .conf-icon { width:34px; height:34px; border-radius:8px; background:var(--blue-soft); display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
     .conf-row-label { font-size:11px; color:var(--muted); font-weight:500; margin-bottom:2px; }
     .conf-row-val   { font-size:13.5px; color:var(--ink); font-weight:600; }
-
-    /* email note */
-    .conf-email-note {
-      margin:4px 28px 24px;
-      background:var(--blue-soft);
-      border-radius:8px;
-      padding:10px 14px;
-      font-size:12px; color:var(--sub);
-      text-align:center;
-      opacity:0;
-      transition:opacity .4s ease .9s;
-    }
+    .conf-email-note { margin:4px 28px 24px; background:var(--blue-soft); border-radius:8px; padding:10px 14px; font-size:12px; color:var(--sub); text-align:center; opacity:0; transition:opacity .4s ease .9s; }
     #conf-overlay.show .conf-email-note { opacity:1; }
-
-    /* new booking button */
-    .conf-btn {
-      display:block;
-      margin:0 28px 28px;
-      background:var(--blue);
-      color:#fff; border:none;
-      border-radius:10px; padding:13px;
-      font:600 14px 'Inter',sans-serif;
-      cursor:pointer; text-align:center;
-      opacity:0;
-      transition:opacity .4s ease 1s, background .15s;
-    }
+    .conf-btn { display:block; margin:0 28px 28px; background:var(--blue); color:#fff; border:none; border-radius:10px; padding:13px; font:600 14px 'Inter',sans-serif; cursor:pointer; text-align:center; opacity:0; transition:opacity .4s ease 1s, background .15s; }
     .conf-btn:hover { background:var(--blue-mid); }
     #conf-overlay.show .conf-btn { opacity:1; }
-
-    /* floating particles */
-    .conf-particle {
-      position:absolute;
-      width:8px; height:8px;
-      border-radius:50%;
-      opacity:0;
-      animation:particle-fly 1.2s ease forwards;
-    }
-    @keyframes particle-fly {
-      0%   { opacity:1; transform:translate(0,0) scale(1); }
-      100% { opacity:0; transform:translate(var(--dx),var(--dy)) scale(0); }
-    }
+    .conf-particle { position:absolute; width:8px; height:8px; border-radius:50%; opacity:0; animation:particle-fly 1.2s ease forwards; }
+    @keyframes particle-fly { 0% { opacity:1; transform:translate(0,0) scale(1); } 100% { opacity:0; transform:translate(var(--dx),var(--dy)) scale(0); } }
 
     /* Mobile */
     @media (max-width:720px) {
-      .cols { grid-template-columns:1fr; }
-      .col-tl,.col-tr,.col-bl,.col-br { grid-column:1; grid-row:auto; }
-      .fsets,.row2,.dt-row,.checks,.bottom { grid-template-columns:1fr; }
+      .cols { grid-template-columns:1fr; grid-template-rows:auto; }
+      .col-tl,.col-bl { grid-column:1; border-bottom:1px solid var(--line); padding-bottom:6px; }
+      .col-tr,.col-br { grid-column:1; border-left:none; padding-left:0; border-top:1px solid var(--line); padding-top:6px; }
+      .row2,.dt-row,.checks,.bottom { grid-template-columns:1fr; }
       h1 { font-size:16px; }
       .send-block { justify-content:stretch; }
       .send-btn { width:100%; }
@@ -379,10 +304,7 @@
   var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
   function tick(){
     var n=new Date();
-    var h=String(n.getHours()).padStart(2,'0');
-    var m=String(n.getMinutes()).padStart(2,'0');
-    var s=String(n.getSeconds()).padStart(2,'0');
-    document.getElementById('clkTime').textContent=h+':'+m+':'+s;
+    document.getElementById('clkTime').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+':'+String(n.getSeconds()).padStart(2,'0');
     document.getElementById('clkDate').textContent=days[n.getDay()]+', '+n.getDate()+' '+months[n.getMonth()]+' '+n.getFullYear();
   }
   tick(); setInterval(tick,1000);
@@ -396,7 +318,7 @@
     <div class="cols">
 
       <!-- TOP-LEFT: Requester Details -->
-      <div class="col col-tl">
+      <div class="col-tl">
         <div class="sec">Requester Details</div>
         <div class="row2">
           <div>
@@ -421,10 +343,13 @@
       </div>
 
       <!-- TOP-RIGHT: Date & Time -->
-      <div class="col col-tr">
+      <div class="col-tr">
         <div class="sec">Date &amp; Time</div>
         <div class="row1">
-          <div class="lbl req-mark" style="margin-bottom:4px;">Select date and time</div>
+          <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px;">
+            <div class="lbl req-mark" style="margin-bottom:0;">Select date and time</div>
+            <span id="durationHint" style="font-size:10.5px;color:var(--blue);font-weight:500;"></span>
+          </div>
           <div class="dt-row">
             <div>
               <div class="sublbl">Date</div>
@@ -436,26 +361,19 @@
             </div>
             <div>
               <div class="sublbl">Start</div>
-              <div class="sw">
-                <select id="startSel" disabled>
-                  <option value="">Select room first</option>
-                </select>
-              </div>
+              <div class="sw"><select id="startSel" disabled><option value="">Select room first</option></select></div>
             </div>
             <div>
               <div class="sublbl">End</div>
-              <div class="sw">
-                <select id="endSel" disabled>
-                  <option value="">Choose start first</option>
-                </select>
-              </div>
+              <div class="sw"><select id="endSel" disabled><option value="">Choose start first</option></select></div>
             </div>
           </div>
+          <div class="hint" style="margin-top:3px;">Bookings must be made at least 24 h in advance &nbsp;·&nbsp; Up to 30 days ahead &nbsp;·&nbsp; Max 8 h per booking</div>
         </div>
       </div>
 
       <!-- BOTTOM-LEFT: Meeting Details -->
-      <div class="col col-bl">
+      <div class="col-bl">
         <div class="sec">Meeting Details</div>
         <div class="row2">
           <div>
@@ -470,27 +388,32 @@
         <div class="row2">
           <div>
             <label for="room" class="req-mark">Room</label>
-            <div class="sw">
-              <select id="room">
-                <option value="">Loading rooms…</option>
-              </select>
-            </div>
+            <div class="sw"><select id="room"><option value="">Loading rooms…</option></select></div>
             <span class="hint" id="roomHint"></span>
           </div>
           <div>
+            <label for="contactPhone">Contact phone / ext.</label>
+            <input type="tel" id="contactPhone" placeholder="e.g. ext. 320 or 965 …">
+          </div>
+        </div>
+        <div class="row2">
+          <div>
             <label for="attendees" class="req-mark">Attendees</label>
             <input type="number" id="attendees" min="1" max="500" placeholder="e.g. 8">
+          </div>
+          <div>
+            <label for="cateringCount">Catering headcount <span style="color:var(--muted);font-weight:400;">(if different)</span></label>
+            <input type="number" id="cateringCount" min="1" max="500" placeholder="e.g. 15">
           </div>
         </div>
       </div>
 
       <!-- BOTTOM-RIGHT: Requirements & Extras -->
-      <div class="col col-br" style="display:flex;flex-direction:column;">
+      <div class="col-br">
         <div class="sec">Requirements &amp; Extras</div>
-        <div style="flex:1;display:flex;flex-direction:column;gap:5px;min-height:0;">
+        <div class="fsets">
 
-          <!-- IT requirements -->
-          <div>
+          <div class="fset-item">
             <span class="fset-lbl">IT requirements <small>– IT Support</small></span>
             <div class="fset-box">
               <div class="checks">
@@ -501,11 +424,11 @@
                 <label class="check"><input type="checkbox" name="it" value="Whiteboard"> Whiteboard</label>
                 <label class="check"><input type="checkbox" name="it" value="Printer/Clicker"> Printer/Clicker</label>
               </div>
+              <textarea id="itOther" placeholder="Other IT details (optional)…"></textarea>
             </div>
           </div>
 
-          <!-- Refreshments -->
-          <div>
+          <div class="fset-item">
             <span class="fset-lbl">Refreshments <small>– Hospitality</small></span>
             <div class="fset-box">
               <div class="checks">
@@ -514,13 +437,8 @@
                 <label class="check"><input type="checkbox" name="rf" value="Juice"> Juice</label>
                 <label class="check"><input type="checkbox" name="rf" value="Snacks"> Snacks</label>
               </div>
+              <textarea id="rfOther" placeholder="Other hospitality details (optional)…"></textarea>
             </div>
-          </div>
-
-          <!-- Other details shared textarea -->
-          <div style="flex:1;display:flex;flex-direction:column;">
-            <span class="fset-lbl">Other details <small>– optional</small></span>
-            <textarea id="rfOther" placeholder="Any extra requirements for IT or Hospitality…" style="resize:none;flex:1;min-height:24px;"></textarea>
           </div>
 
         </div>
@@ -535,6 +453,36 @@
           <input type="checkbox" id="priv"> <strong>Private meeting</strong>
         </label>
         <p class="priv-desc">Room screen shows "Private meeting"<br>instead of the title and your name.</p>
+      </div>
+
+      <div class="priv-block">
+        <label class="priv-lbl">
+          <input type="checkbox" id="recurChk"> <strong>Recurring meeting</strong>
+        </label>
+        <div id="recurPanel" style="display:none;margin-top:4px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
+            <div>
+              <div class="sublbl">Repeat</div>
+              <div class="sw">
+                <select id="recurFreq">
+                  <option value="daily">Daily</option>
+                  <option value="weekly" selected>Weekly</option>
+                  <option value="biweekly">Every 2 weeks</option>
+                  <option value="monthly">Monthly</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <div class="sublbl">Until date</div>
+              <button type="button" class="date-btn" id="recurEndBtn" style="height:28px;">
+                <span id="recurEndTxt">dd / mm / yyyy</span>
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+              </button>
+              <input type="date" id="recurEndInput" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;">
+            </div>
+          </div>
+          <div class="hint" id="recurHint" style="margin-top:3px;"></div>
+        </div>
       </div>
 
       <div class="notes-block">
@@ -559,7 +507,6 @@
 <script>
 // ── Config ────────────────────────────────────────────────────────
 var GAS_URL = 'https://script.google.com/macros/s/AKfycbwM9MzgGc_8xWvrqgB80MDjIGNCyrbj15OHZBYXPY1bEpLURpBDZOrqdfV-j-RESyBg/exec';
-
 var ROOMS_DATA = [];
 var HOURS_DATA = { start:'08:00', end:'17:00', step:30, maxHours:8, days:[0,1,2,3,4] };
 var selectedDate = '';
@@ -588,16 +535,13 @@ callGas('getRooms', [], function(rooms) {
   document.getElementById('room').innerHTML = '<option value="">Could not load rooms</option>';
   console.warn('getRooms error:', err);
 });
-
 callGas('getHours', [], function(h) { HOURS_DATA = h; }, function(){});
 
 // ── Room change ───────────────────────────────────────────────────
 document.getElementById('room').addEventListener('change', function() {
   var roomName = this.value;
   var room = ROOMS_DATA.find(function(r){ return r.name === roomName; });
-  document.getElementById('roomHint').textContent = room
-    ? room.location + ' · needs approval'
-    : '';
+  document.getElementById('roomHint').textContent = room ? room.location + ' · needs approval' : '';
   refreshTimeSlots();
 });
 
@@ -606,49 +550,40 @@ document.getElementById('dateBtn').addEventListener('click', function() {
   var di = document.getElementById('dateInput');
   di.showPicker ? di.showPicker() : di.click();
 });
-
 document.getElementById('dateInput').addEventListener('change', function() {
   if (!this.value) return;
   selectedDate = this.value;
   var parts = this.value.split('-');
-  var d = parts[2], m = parts[1], y = parts[0];
   var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   var dow = days[new Date(this.value).getDay()];
-  document.getElementById('dateTxt').textContent = d + ' / ' + m + ' / ' + y + '  (' + dow + ')';
+  document.getElementById('dateTxt').textContent = parts[2] + ' / ' + parts[1] + ' / ' + parts[0] + '  (' + dow + ')';
   document.getElementById('dateBtn').classList.add('filled');
   refreshTimeSlots();
 });
 
 // ── Time slots ────────────────────────────────────────────────────
 function ymd(dt) {
-  return dt.getFullYear() + '-' +
-    String(dt.getMonth()+1).padStart(2,'0') + '-' +
-    String(dt.getDate()).padStart(2,'0');
+  return dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0') + '-' + String(dt.getDate()).padStart(2,'0');
 }
 
 function refreshTimeSlots() {
   var roomName = document.getElementById('room').value;
   var startSel = document.getElementById('startSel');
   var endSel   = document.getElementById('endSel');
-
   startSel.innerHTML = '<option value="">Loading…</option>';
   startSel.disabled = true;
   endSel.innerHTML  = '<option value="">Choose start first</option>';
   endSel.disabled   = true;
-
   if (!roomName || !selectedDate) {
     startSel.innerHTML = '<option value="">Select room &amp; date first</option>';
     return;
   }
-
-  // Past-date guard
   var todayIso = ymd(new Date());
   if (selectedDate < todayIso) {
     say('The selected date is in the past. Please choose today or a future date.', 'err');
     startSel.innerHTML = '<option value="">Select a valid date first</option>';
     return;
   }
-
   callGas('getBusy', [roomName, selectedDate], function(busy) {
     var h = HOURS_DATA;
     var step = h.step || 30;
@@ -656,7 +591,6 @@ function refreshTimeSlots() {
     var cur = timeToMin(h.start);
     var end = timeToMin(h.end);
     while (cur <= end) { times.push(minToTime(cur)); cur += step; }
-
     startSel.innerHTML = '<option value="">Select start time</option>';
     times.forEach(function(t) {
       var blocked = busy.some(function(b) {
@@ -678,13 +612,16 @@ function refreshTimeSlots() {
 document.getElementById('startSel').addEventListener('change', function() {
   var endSel = document.getElementById('endSel');
   var startMin = timeToMin(this.value);
-  if (!this.value) { endSel.disabled = true; endSel.innerHTML = '<option value="">Choose start first</option>'; return; }
-
+  if (!this.value) {
+    endSel.disabled = true;
+    endSel.innerHTML = '<option value="">Choose start first</option>';
+    document.getElementById('durationHint').textContent = '';
+    return;
+  }
   var h = HOURS_DATA;
   var step = h.step || 30;
   var maxMin = h.maxHours ? startMin + h.maxHours * 60 : 9999;
   var endLimit = timeToMin(h.end);
-
   endSel.innerHTML = '<option value="">Select end time</option>';
   var t = startMin + step;
   var i = 1;
@@ -695,22 +632,73 @@ document.getElementById('startSel').addEventListener('change', function() {
     t += step; i++;
   }
   endSel.disabled = false;
+  updateDuration();
 });
+document.getElementById('endSel').addEventListener('change', updateDuration);
+
+function updateDuration() {
+  var s = document.getElementById('startSel').value;
+  var e = document.getElementById('endSel').value;
+  var hint = document.getElementById('durationHint');
+  if (!s || !e) { hint.textContent = ''; return; }
+  var mins = timeToMin(e) - timeToMin(s);
+  if (mins <= 0) { hint.textContent = ''; return; }
+  var h = Math.floor(mins / 60), m = mins % 60;
+  hint.textContent = '⏱ ' + (h ? h + ' h ' : '') + (m ? m + ' min' : '');
+}
+
+// ── Recurring meeting ─────────────────────────────────────────────
+document.getElementById('recurChk').addEventListener('change', function() {
+  document.getElementById('recurPanel').style.display = this.checked ? 'block' : 'none';
+  updateRecurHint();
+});
+document.getElementById('recurFreq').addEventListener('change', updateRecurHint);
+document.getElementById('recurEndBtn').addEventListener('click', function() {
+  var di = document.getElementById('recurEndInput');
+  di.showPicker ? di.showPicker() : di.click();
+});
+document.getElementById('recurEndInput').addEventListener('change', function() {
+  if (!this.value) return;
+  var parts = this.value.split('-');
+  document.getElementById('recurEndTxt').textContent = parts[2] + ' / ' + parts[1] + ' / ' + parts[0];
+  document.getElementById('recurEndBtn').classList.add('filled');
+  updateRecurHint();
+});
+
+function updateRecurHint() {
+  var hint = document.getElementById('recurHint');
+  var freq = document.getElementById('recurFreq').value;
+  var endVal = document.getElementById('recurEndInput').value;
+  if (!endVal || !document.getElementById('recurChk').checked) { hint.textContent = ''; return; }
+  var start = new Date(selectedDate || new Date());
+  var end = new Date(endVal);
+  if (end <= start) { hint.textContent = 'End date must be after the booking date.'; hint.style.color = 'var(--err)'; return; }
+  var count = 0, cur = new Date(start);
+  var steps = { daily:1, weekly:7, biweekly:14, monthly:30 };
+  var step = steps[freq] || 7;
+  while (cur <= end && count < 200) { cur.setDate(cur.getDate() + step); count++; }
+  hint.textContent = count + ' occurrence' + (count !== 1 ? 's' : '') + ' will be submitted.';
+  hint.style.color = 'var(--blue)';
+}
 
 // ── Submit ────────────────────────────────────────────────────────
 document.getElementById('sendBtn').addEventListener('click', function() {
-  var name      = v('name');
-  var dept      = v('dept');
-  var email     = v('email');
-  var mobile    = v('mobile');
-  var host      = v('host');
-  var title     = v('title');
-  var roomName  = v('room');
-  var attendees = v('attendees');
-  var notes     = v('notes');
-  var priv      = document.getElementById('priv').checked;
+  var name         = v('name');
+  var dept         = v('dept');
+  var email        = v('email');
+  var mobile       = v('mobile');
+  var contactPhone = v('contactPhone');
+  var host         = v('host');
+  var title        = v('title');
+  var roomName     = v('room');
+  var attendees    = v('attendees');
+  var cateringCount = v('cateringCount') || attendees;
+  var notes        = v('notes');
+  var priv         = document.getElementById('priv').checked;
+  var isRecur      = document.getElementById('recurChk').checked;
+  var recurFreq    = document.getElementById('recurFreq').value;
+  var recurEnd     = document.getElementById('recurEndInput').value;
 
-  // Validation
   if (!name)      return say('Please enter your name.', 'err');
   if (!dept)      return say('Please enter your department.', 'err');
   if (!email)     return say('Please enter your hospital email address.', 'err');
@@ -721,35 +709,30 @@ document.getElementById('sendBtn').addEventListener('click', function() {
   if (!roomName)  return say('Please select a room.', 'err');
   if (!attendees) return say('Please enter the number of attendees.', 'err');
   if (!selectedDate) return say('Please select a date.', 'err');
-
-  var todayIso = ymd(new Date());
-  if (selectedDate < todayIso) return say('The selected date is in the past. Please choose today or a future date.', 'err');
-
+  if (selectedDate < ymd(new Date())) return say('The selected date is in the past.', 'err');
   if (!document.getElementById('startSel').value) return say('Please select a start time.', 'err');
   if (!document.getElementById('endSel').value)   return say('Please select an end time.', 'err');
+  if (isRecur && !recurEnd) return say('Please select a recurring end date.', 'err');
+  if (isRecur && recurEnd <= selectedDate) return say('Recurring end date must be after the booking date.', 'err');
 
-  // Collect checkboxes
   var itChecks = Array.from(document.querySelectorAll('input[name="it"]:checked')).map(function(c){ return c.value; });
+  var itOther  = v('itOther');
+  if (itOther) itChecks.push(itOther);
   var rfChecks = Array.from(document.querySelectorAll('input[name="rf"]:checked')).map(function(c){ return c.value; });
   var rfOther  = v('rfOther');
   if (rfOther) rfChecks.push(rfOther);
 
   var data = {
-    name:      name,
-    dept:      dept,
-    email:     email,
-    mobile:    mobile,
-    host:      host,
-    title:     title,
-    room:      roomName,
-    date:      selectedDate,
-    start:     document.getElementById('startSel').value,
-    end:       document.getElementById('endSel').value,
-    attendees: attendees,
-    needs:     itChecks.join(', ') || '',
-    refresh:   rfChecks.join(', ') || '',
-    priv:      priv,
-    notes:     notes
+    name: name, dept: dept, email: email, mobile: mobile,
+    contactPhone: contactPhone, host: host, title: title, room: roomName,
+    date: selectedDate,
+    start: document.getElementById('startSel').value,
+    end:   document.getElementById('endSel').value,
+    attendees: attendees, cateringCount: cateringCount,
+    needs: itChecks.join(', ') || '',
+    refresh: rfChecks.join(', ') || '',
+    recurring: isRecur ? recurFreq + ' until ' + recurEnd : '',
+    priv: priv, notes: notes
   };
 
   var btn = document.getElementById('sendBtn');
@@ -772,15 +755,14 @@ document.getElementById('sendBtn').addEventListener('click', function() {
 function v(id) { return document.getElementById(id).value.trim(); }
 function say(html, type) {
   var el = document.getElementById('msg');
-  el.innerHTML = html;
-  el.className = type;
+  el.innerHTML = html; el.className = type;
   el.scrollIntoView({ behavior:'smooth', block:'nearest' });
 }
 function timeToMin(t) { if (!t) return 0; var p = t.split(':'); return parseInt(p[0]) * 60 + parseInt(p[1]); }
 function minToTime(m) { return String(Math.floor(m/60)).padStart(2,'0') + ':' + String(m%60).padStart(2,'0'); }
 </script>
 
-<!-- ── Confirmation Overlay ── -->
+<!-- Confirmation Overlay -->
 <div id="conf-overlay">
   <div class="conf-card">
     <div class="conf-hero" id="conf-hero">
@@ -796,22 +778,10 @@ function minToTime(m) { return String(Math.floor(m/60)).padStart(2,'0') + ':' + 
       <div style="color:rgba(255,255,255,.5);font-size:22px">🎫</div>
     </div>
     <div class="conf-details">
-      <div class="conf-row">
-        <div class="conf-icon">🏢</div>
-        <div><div class="conf-row-label">Room</div><div class="conf-row-val" id="conf-room">—</div></div>
-      </div>
-      <div class="conf-row">
-        <div class="conf-icon">📅</div>
-        <div><div class="conf-row-label">Date &amp; Time</div><div class="conf-row-val" id="conf-when">—</div></div>
-      </div>
-      <div class="conf-row">
-        <div class="conf-icon">👤</div>
-        <div><div class="conf-row-label">Requested by</div><div class="conf-row-val" id="conf-name">—</div></div>
-      </div>
-      <div class="conf-row">
-        <div class="conf-icon">⏳</div>
-        <div><div class="conf-row-label">Status</div><div class="conf-row-val" style="color:#d97706">Pending Approval</div></div>
-      </div>
+      <div class="conf-row"><div class="conf-icon">🏢</div><div><div class="conf-row-label">Room</div><div class="conf-row-val" id="conf-room">—</div></div></div>
+      <div class="conf-row"><div class="conf-icon">📅</div><div><div class="conf-row-label">Date &amp; Time</div><div class="conf-row-val" id="conf-when">—</div></div></div>
+      <div class="conf-row"><div class="conf-icon">👤</div><div><div class="conf-row-label">Requested by</div><div class="conf-row-val" id="conf-name">—</div></div></div>
+      <div class="conf-row"><div class="conf-icon">⏳</div><div><div class="conf-row-label">Status</div><div class="conf-row-val" style="color:#d97706">Pending Approval</div></div></div>
     </div>
     <div class="conf-email-note" id="conf-email-note">📧 A confirmation email has been sent to your inbox</div>
     <button class="conf-btn" onclick="closeConfirmation()">＋ Submit Another Booking</button>
@@ -826,24 +796,14 @@ function showConfirmation(result, email) {
   var nameEl = document.getElementById('name');
   document.getElementById('conf-name').textContent = (nameEl ? nameEl.value : '') || '—';
   document.getElementById('conf-email-note').textContent = '📧 A confirmation email has been sent to ' + email;
-
-  var overlay = document.getElementById('conf-overlay');
-  overlay.classList.add('show');
+  document.getElementById('conf-overlay').classList.add('show');
   spawnParticles();
 }
-
 function closeConfirmation() {
-  var overlay = document.getElementById('conf-overlay');
-  overlay.classList.remove('show');
-  // reset form
-  var form = document.getElementById('bookingForm') || document.querySelector('form');
-  if (form) form.reset();
+  document.getElementById('conf-overlay').classList.remove('show');
   var msg = document.getElementById('msg');
   if (msg) { msg.style.display='none'; msg.textContent=''; }
-  // reload rooms/hours
-  if (typeof loadRooms === 'function') loadRooms();
 }
-
 function spawnParticles() {
   var hero = document.getElementById('conf-hero');
   var colors = ['#60a5fa','#93c5fd','#bfdbfe','#ffffff','#fde68a','#6ee7b7'];
