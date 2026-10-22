@@ -25,15 +25,15 @@
       --bg:#0d1520; --card:#141e2e; --field:#1a2438; color-scheme:dark;
     }
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-    html, body { height:100%; }
+    html, body { height:100%; overflow:hidden; }
     body {
       background:var(--bg); color:var(--ink);
       font-family:'Inter',system-ui,-apple-system,sans-serif;
       font-size:12.5px; line-height:1.35;
       padding-left:max(12px,env(safe-area-inset-left,0px));
       padding-right:max(12px,env(safe-area-inset-right,0px));
-      padding-block:0; min-height:100%;
-      overflow:hidden;
+      padding-block:0;
+      display:flex; flex-direction:column;
     }
 
     /* Header */
@@ -64,12 +64,19 @@
     }
 
     /* Main */
-    main { max-width:1280px; margin:8px auto 0; }
+    main { max-width:1280px; width:100%; margin:8px auto 0; flex:1; display:flex; flex-direction:column; }
     .card {
       background:var(--card); border:1px solid var(--line);
       border-radius:12px; padding:14px 20px 12px;
       box-shadow:0 4px 24px rgba(11,74,143,.08);
+      flex:1; display:flex; flex-direction:column;
     }
+    .cols { flex:1; }
+    .footer-credit {
+      text-align:center; padding:8px 0 4px;
+      font-size:11px; color:var(--muted); letter-spacing:.02em;
+    }
+    .footer-credit strong { color:var(--blue); font-weight:600; }
     .req-note { font-size:11px; color:var(--muted); margin-bottom:8px; }
     .req-note b { color:var(--err); }
 
@@ -517,6 +524,10 @@
     </div>
 
     <div id="msg"></div>
+
+    <div class="footer-credit">
+      <strong>Kuwait Hospital</strong> &nbsp;·&nbsp; Meeting Room Booking Portal &nbsp;·&nbsp; IT Department
+    </div>
 
   </div><!-- .card -->
 </main>
