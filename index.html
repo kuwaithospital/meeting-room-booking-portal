@@ -360,7 +360,24 @@
                 <span id="dateTxt">dd / mm / yyyy</span>
                 <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
               </button>
-              <input type="date" id="dateInput" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;">
+              <!-- Custom calendar popup -->
+              <div id="calPop" style="display:none;position:absolute;z-index:999;background:var(--card);border:1.5px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.15);padding:12px;min-width:260px;margin-top:4px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                  <button type="button" id="calPrev" style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--blue);padding:2px 8px;">&#8249;</button>
+                  <span id="calTitle" style="font-size:13px;font-weight:600;color:var(--ink)"></span>
+                  <button type="button" id="calNext" style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--blue);padding:2px 8px;">&#8250;</button>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;">
+                  <div style="font-size:10px;font-weight:600;color:var(--muted);padding:2px;">Su</div>
+                  <div style="font-size:10px;font-weight:600;color:var(--muted);padding:2px;">Mo</div>
+                  <div style="font-size:10px;font-weight:600;color:var(--muted);padding:2px;">Tu</div>
+                  <div style="font-size:10px;font-weight:600;color:var(--muted);padding:2px;">We</div>
+                  <div style="font-size:10px;font-weight:600;color:var(--muted);padding:2px;">Th</div>
+                  <div style="font-size:10px;font-weight:600;color:#e0b0b0;padding:2px;">Fr</div>
+                  <div style="font-size:10px;font-weight:600;color:#e0b0b0;padding:2px;">Sa</div>
+                </div>
+                <div id="calGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;margin-top:2px;"></div>
+              </div>
             </div>
             <div>
               <div class="sublbl">Start</div>
@@ -424,9 +441,9 @@
               <div class="checks">
                 <label class="check"><input type="checkbox" name="it" value="Laptop"> Laptop</label>
                 <label class="check"><input type="checkbox" name="it" value="Projector"> Projector</label>
-                <label class="check"><input type="checkbox" name="it" value="Video conf."> Video conf.</label>
+                <label class="check" style="opacity:0.35;cursor:not-allowed"><input type="checkbox" name="it" value="Video conf." disabled> Video conf.</label>
                 <label class="check"><input type="checkbox" name="it" value="Mic/Speakers"> Mic/Speakers</label>
-                <label class="check"><input type="checkbox" name="it" value="Whiteboard"> Whiteboard</label>
+                <label class="check" id="wbLabel" style="opacity:0.35;cursor:not-allowed"><input type="checkbox" name="it" value="Whiteboard" id="wbCheck" disabled> Whiteboard</label>
                 <label class="check"><input type="checkbox" name="it" value="Printer/Clicker"> Printer/Clicker</label>
               </div>
               <div class="fset-other">
@@ -549,42 +566,109 @@ callGas('getHours', [], function(h) { HOURS_DATA = h; }, function(){});
 document.getElementById('room').addEventListener('change', function() {
   var room = ROOMS_DATA.find(function(r){ return r.name === this.value; }, this);
   document.getElementById('roomHint').textContent = room ? room.location + ' · needs approval' : '';
-  refreshTimeSlots();
-});
 
-// ── Date picker ───────────────────────────────────────────────────
-document.getElementById('dateBtn').addEventListener('click', function() {
-  var di = document.getElementById('dateInput');
-  di.showPicker ? di.showPicker() : di.click();
-});
-// Set min date to today so past dates are greyed out in the native picker
-(function(){
-  var today = ymd(new Date());
-  document.getElementById('dateInput').min = today;
-})();
-
-document.getElementById('dateInput').addEventListener('change', function() {
-  if (!this.value) return;
-  var dow = new Date(this.value).getDay(); // 0=Sun,5=Fri,6=Sat
-  if (dow === 5 || dow === 6) {
-    var inp = this;
-    setTimeout(function() {
-      inp.value = '';
-      document.getElementById('dateTxt').textContent = 'dd / mm / yyyy';
-      document.getElementById('dateBtn').classList.remove('filled');
-      selectedDate = '';
-    }, 0);
-    say('Friday and Saturday are off days. Please select a working day (Sun–Thu).', 'err');
-    return;
+  // Whiteboard only available in Hall 1008 (KHC Meeting Hall)
+  var hasWhiteboard = this.value === 'Hall 1008';
+  var wbLabel = document.getElementById('wbLabel');
+  var wbCheck = document.getElementById('wbCheck');
+  if (hasWhiteboard) {
+    wbLabel.style.opacity = '1';
+    wbLabel.style.cursor  = 'pointer';
+    wbCheck.disabled = false;
+  } else {
+    wbLabel.style.opacity = '0.35';
+    wbLabel.style.cursor  = 'not-allowed';
+    wbCheck.disabled = true;
+    wbCheck.checked  = false; // uncheck if switching away
   }
-  say('', '');  // clear any previous error
-  selectedDate = this.value;
-  var parts = this.value.split('-');
-  var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  document.getElementById('dateTxt').textContent = parts[2] + ' / ' + parts[1] + ' / ' + parts[0] + '  (' + days[dow] + ')';
-  document.getElementById('dateBtn').classList.add('filled');
+
   refreshTimeSlots();
 });
+
+// ── Custom Calendar Picker ────────────────────────────────────────
+(function(){
+  var calPop  = document.getElementById('calPop');
+  var calGrid = document.getElementById('calGrid');
+  var calTitle= document.getElementById('calTitle');
+  var todayD  = new Date(); todayD.setHours(0,0,0,0);
+  var maxDate = new Date(todayD); maxDate.setDate(todayD.getDate()+30);
+  var curYear = todayD.getFullYear(), curMonth = todayD.getMonth();
+  var MONTHS  = ['January','February','March','April','May','June',
+                 'July','August','September','October','November','December'];
+  var DNAMES  = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  function p2(n){return n<10?'0'+n:String(n);}
+
+  function renderCal(){
+    calTitle.textContent = MONTHS[curMonth]+' '+curYear;
+    calGrid.innerHTML='';
+    var first = new Date(curYear,curMonth,1).getDay();
+    var dim   = new Date(curYear,curMonth+1,0).getDate();
+    for(var e=0;e<first;e++){calGrid.appendChild(document.createElement('div'));}
+    for(var d=1;d<=dim;d++){
+      var cd=new Date(curYear,curMonth,d); cd.setHours(0,0,0,0);
+      var dow=cd.getDay();
+      var ds=curYear+'-'+p2(curMonth+1)+'-'+p2(d);
+      var cell=document.createElement('div');
+      cell.textContent=d;
+      cell.style.cssText='border-radius:6px;padding:4px 2px;font-size:12px;line-height:1.6;text-align:center;';
+      var past=cd<todayD, future=cd>maxDate, wkend=(dow===5||dow===6);
+      if(past||future||wkend){
+        cell.style.cursor='not-allowed';
+        if(wkend){
+          cell.style.background='#fdeaea';
+          cell.style.color='#d08080';
+          cell.title='Off day (Fri/Sat)';
+        } else {
+          cell.style.color='var(--muted)';
+          cell.style.opacity='0.4';
+        }
+      } else {
+        cell.style.cursor='pointer';
+        var isSel=(ds===selectedDate);
+        cell.style.background=isSel?'var(--blue)':'';
+        cell.style.color=isSel?'#fff':'var(--ink)';
+        cell.style.fontWeight=isSel?'600':'';
+        cell.addEventListener('mouseenter',function(){if(!this._sel)this.style.background='var(--blue-soft)';});
+        cell.addEventListener('mouseleave',function(){if(!this._sel)this.style.background='';});
+        if(isSel)cell._sel=true;
+        (function(dateStr,dayOfWeek,el){
+          el.addEventListener('click',function(){
+            selectedDate=dateStr;
+            var pp=dateStr.split('-');
+            document.getElementById('dateTxt').textContent=pp[2]+' / '+pp[1]+' / '+pp[0]+'  ('+DNAMES[dayOfWeek]+')';
+            document.getElementById('dateBtn').classList.add('filled');
+            say('','');
+            calPop.style.display='none';
+            renderCal();
+            refreshTimeSlots();
+          });
+        })(ds,dow,cell);
+      }
+      calGrid.appendChild(cell);
+    }
+  }
+
+  document.getElementById('dateBtn').addEventListener('click',function(e){
+    e.stopPropagation();
+    var open=calPop.style.display!=='none';
+    calPop.style.display=open?'none':'block';
+    if(!open)renderCal();
+  });
+  document.getElementById('calPrev').addEventListener('click',function(e){
+    e.stopPropagation();
+    curMonth--;if(curMonth<0){curMonth=11;curYear--;}renderCal();
+  });
+  document.getElementById('calNext').addEventListener('click',function(e){
+    e.stopPropagation();
+    curMonth++;if(curMonth>11){curMonth=0;curYear++;}renderCal();
+  });
+  document.addEventListener('click',function(e){
+    if(!calPop.contains(e.target)&&e.target.id!=='dateBtn'&&!e.target.closest('#dateBtn'))
+      calPop.style.display='none';
+  });
+  renderCal();
+})();
 
 // ── Time slots ────────────────────────────────────────────────────
 function ymd(dt) {
@@ -719,7 +803,7 @@ document.getElementById('sendBtn').addEventListener('click', function() {
   if (!title)        return say('Please enter a meeting title.', 'err');
   if (!roomName)     return say('Please select a room.', 'err');
   if (!attendees)    return say('Please enter the number of attendees.', 'err');
-  if (!selectedDate) return say('Please select a date.', 'err');
+  if (!selectedDate) return say('Please select a valid working day (Sun–Thu).', 'err');
   if (selectedDate < ymd(new Date())) return say('The selected date is in the past.', 'err');
   if (!document.getElementById('startSel').value) return say('Please select a start time.', 'err');
   if (!document.getElementById('endSel').value)   return say('Please select an end time.', 'err');
