@@ -117,6 +117,7 @@
       outline:none; border-color:var(--blue-mid);
       box-shadow:0 0 0 3px rgba(11,74,143,.12); background:var(--card);
     }
+    ::placeholder { text-decoration:none; color:var(--muted); opacity:1; }
     .sw { position:relative; }
     .sw select { padding-right:30px; cursor:pointer; }
     .sw::after {
@@ -328,21 +329,21 @@
         <div class="row2">
           <div>
             <label for="name" class="req-mark">Your name</label>
-            <input type="text" id="name" placeholder="e.g. Fatima Al-Rashidi" autocomplete="name">
+            <input type="text" id="name" placeholder="Fatima Al-Rashidi" autocomplete="name">
           </div>
           <div>
             <label for="dept" class="req-mark">Department</label>
-            <input type="text" id="dept" placeholder="e.g. Cardiology">
+            <input type="text" id="dept" placeholder="Cardiology">
           </div>
         </div>
         <div class="row2">
           <div>
             <label for="email" class="req-mark">Hospital email</label>
-            <input type="email" id="email" placeholder="name@kuwaithospital.com.kw" autocomplete="email">
+            <input type="email" id="email" placeholder="name@kuwaithospital.com.kw" autocomplete="email" style="font-size:11.5px;">
           </div>
           <div>
             <label for="mobile">Mobile / extension</label>
-            <input type="tel" id="mobile" placeholder="e.g. 965 1234 5678">
+            <input type="tel" id="mobile" placeholder="12345678" maxlength="8" pattern="[0-9]{1,8}">
           </div>
         </div>
       </div>
@@ -383,11 +384,11 @@
         <div class="row2">
           <div>
             <label for="host" class="req-mark">Host / Organizer</label>
-            <input type="text" id="host" placeholder="e.g. Dr. Khalid Al-Rashidi">
+            <input type="text" id="host" placeholder="Dr. Khalid Al-Rashidi">
           </div>
           <div>
             <label for="title" class="req-mark">Meeting / Event title</label>
-            <input type="text" id="title" placeholder="e.g. Cardiology Review">
+            <input type="text" id="title" placeholder="Cardiology Review">
           </div>
         </div>
         <div class="row2">
@@ -398,17 +399,17 @@
           </div>
           <div>
             <label for="attendees" class="req-mark">Attendees</label>
-            <input type="number" id="attendees" min="1" max="500" placeholder="e.g. 8">
+            <input type="number" id="attendees" min="1" max="500" placeholder="8">
           </div>
         </div>
         <div class="row2">
           <div>
             <label for="contactPhone">Contact phone / ext. <span style="color:var(--muted);font-weight:400;">(during meeting)</span></label>
-            <input type="tel" id="contactPhone" placeholder="e.g. ext. 320">
+            <input type="tel" id="contactPhone" placeholder="ext. 320 or 12345678" maxlength="8" pattern="[0-9]{1,8}">
           </div>
           <div>
             <label for="cateringCount">Catering headcount <span style="color:var(--muted);font-weight:400;">(if different)</span></label>
-            <input type="number" id="cateringCount" min="1" max="500" placeholder="e.g. 15">
+            <input type="number" id="cateringCount" min="1" max="500" placeholder="15">
           </div>
         </div>
       </div>
@@ -566,13 +567,17 @@ document.getElementById('dateInput').addEventListener('change', function() {
   if (!this.value) return;
   var dow = new Date(this.value).getDay(); // 0=Sun,5=Fri,6=Sat
   if (dow === 5 || dow === 6) {
+    var inp = this;
+    setTimeout(function() {
+      inp.value = '';
+      document.getElementById('dateTxt').textContent = 'dd / mm / yyyy';
+      document.getElementById('dateBtn').classList.remove('filled');
+      selectedDate = '';
+    }, 0);
     say('Friday and Saturday are off days. Please select a working day (Sun–Thu).', 'err');
-    this.value = '';
-    document.getElementById('dateTxt').textContent = 'dd / mm / yyyy';
-    document.getElementById('dateBtn').classList.remove('filled');
-    selectedDate = '';
     return;
   }
+  say('', '');  // clear any previous error
   selectedDate = this.value;
   var parts = this.value.split('-');
   var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
