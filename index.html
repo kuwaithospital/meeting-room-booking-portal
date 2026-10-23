@@ -567,8 +567,9 @@ document.getElementById('room').addEventListener('change', function() {
   var room = ROOMS_DATA.find(function(r){ return r.name === this.value; }, this);
   document.getElementById('roomHint').textContent = room ? room.location + ' · needs approval' : '';
 
-  // Whiteboard only available in Hall 1008 (KHC Meeting Hall)
-  var hasWhiteboard = this.value === 'Hall 1008';
+  // Whiteboard only available in KHC Meeting Hall (matches 'KHC' or 'Hall 1008')
+  var rvLow = this.value.toLowerCase();
+  var hasWhiteboard = rvLow.indexOf('khc') !== -1 || rvLow.indexOf('1008') !== -1;
   var wbLabel = document.getElementById('wbLabel');
   var wbCheck = document.getElementById('wbCheck');
   if (hasWhiteboard) {
