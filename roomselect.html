@@ -325,19 +325,30 @@ setInterval(tickClock,1000); tickClock();
 
 /* ── BACKGROUND MATRIX ── */
 (function(){
-  var cv=$('bgCanvas'),ctx=cv.getContext('2d'),cols,drops;
-  function resize(){cv.width=innerWidth;cv.height=innerHeight;cols=Math.floor(cv.width/16)+1;drops=Array(cols).fill(1);}
+  var cv=$('bgCanvas'),ctx=cv.getContext('2d'),cols,drops,speeds,chars='アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン01';
+  var SZ=16,FADE=0.05,tick=0;
+  function resize(){
+    cv.width=innerWidth;cv.height=innerHeight;
+    cols=Math.floor(cv.width/SZ)+1;
+    drops=Array.from({length:cols},function(){return Math.random()*-50|0;});
+    speeds=Array.from({length:cols},function(){return 0.3+Math.random()*0.4;});
+  }
   resize(); window.addEventListener('resize',resize);
-  var chars='アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン01';
   (function frame(){
-    ctx.fillStyle='rgba(11,26,61,0.055)';ctx.fillRect(0,0,cv.width,cv.height);
-    ctx.fillStyle='rgba(100,160,255,0.4)';ctx.font='13px monospace';
-    for(var i=0;i<drops.length;i++){
-      if(Math.random()<0.35){
-        ctx.fillText(chars[Math.floor(Math.random()*chars.length)],i*16,drops[i]*16);
-        if(drops[i]*16>cv.height&&Math.random()>.975)drops[i]=0;
-        drops[i]++;
-      }
+    tick++;
+    // gentle fade trail
+    ctx.fillStyle='rgba(11,26,61,'+FADE+')';ctx.fillRect(0,0,cv.width,cv.height);
+    for(var i=0;i<cols;i++){
+      if(drops[i]<0){drops[i]+=speeds[i];continue;}
+      var y=drops[i]*SZ;
+      // bright head
+      ctx.fillStyle='rgba(200,225,255,0.85)';ctx.font='bold '+SZ+'px monospace';
+      ctx.fillText(chars[Math.random()*chars.length|0],i*SZ,y);
+      // body slightly dimmer
+      ctx.fillStyle='rgba(100,160,255,0.5)';ctx.font=SZ+'px monospace';
+      if(y>SZ)ctx.fillText(chars[Math.random()*chars.length|0],i*SZ,y-SZ);
+      drops[i]+=speeds[i];
+      if(y>cv.height&&Math.random()<0.018)drops[i]=Math.random()*-30|0;
     }
     requestAnimationFrame(frame);
   })();
@@ -347,20 +358,27 @@ setInterval(tickClock,1000); tickClock();
 var ssMatRunning=false;
 function startSsMat(){
   if(ssMatRunning)return;ssMatRunning=true;
-  var cv=$('ss-canvas'),ctx=cv.getContext('2d'),cols,drops;
-  function resize(){cv.width=innerWidth;cv.height=innerHeight;cols=Math.floor(cv.width/16)+1;drops=Array(cols).fill(1);}
+  var cv=$('ss-canvas'),ctx=cv.getContext('2d'),cols,drops,speeds,chars='アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン01';
+  var SZ=16,FADE=0.05;
+  function resize(){
+    cv.width=innerWidth;cv.height=innerHeight;
+    cols=Math.floor(cv.width/SZ)+1;
+    drops=Array.from({length:cols},function(){return Math.random()*-50|0;});
+    speeds=Array.from({length:cols},function(){return 0.3+Math.random()*0.4;});
+  }
   resize(); window.addEventListener('resize',resize);
-  var chars='アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン01';
   (function frame(){
     if(!$('screensaver').classList.contains('active')){ssMatRunning=false;return;}
-    ctx.fillStyle='rgba(11,26,61,0.05)';ctx.fillRect(0,0,cv.width,cv.height);
-    ctx.fillStyle='rgba(100,160,255,0.55)';ctx.font='14px monospace';
-    for(var i=0;i<drops.length;i++){
-      if(Math.random()<0.35){
-        ctx.fillText(chars[Math.floor(Math.random()*chars.length)],i*16,drops[i]*16);
-        if(drops[i]*16>cv.height&&Math.random()>.975)drops[i]=0;
-        drops[i]++;
-      }
+    ctx.fillStyle='rgba(11,26,61,'+FADE+')';ctx.fillRect(0,0,cv.width,cv.height);
+    for(var i=0;i<cols;i++){
+      if(drops[i]<0){drops[i]+=speeds[i];continue;}
+      var y=drops[i]*SZ;
+      ctx.fillStyle='rgba(200,225,255,0.85)';ctx.font='bold '+SZ+'px monospace';
+      ctx.fillText(chars[Math.random()*chars.length|0],i*SZ,y);
+      ctx.fillStyle='rgba(100,160,255,0.5)';ctx.font=SZ+'px monospace';
+      if(y>SZ)ctx.fillText(chars[Math.random()*chars.length|0],i*SZ,y-SZ);
+      drops[i]+=speeds[i];
+      if(y>cv.height&&Math.random()<0.018)drops[i]=Math.random()*-30|0;
     }
     requestAnimationFrame(frame);
   })();
@@ -383,7 +401,7 @@ function buildBtns(){
         '<div class="rb-loc">'+r.location+'</div>'+
       '</div>'+
       '<div class="rb-arrow">&#8250;</div>';
-    btn.addEventListener('click',function(){window.location.href='https://mdsirajudeen.github.io/meetingroom.booking/room.html?room='+encodeURIComponent(r.name);});
+    btn.addEventListener('click',function(){window.location.href='https://kuwaithospital.github.io/meeting-room-booking-portal/room.html?room='+encodeURIComponent(r.name);});
     wrap.appendChild(btn);
   });
 }
@@ -496,13 +514,9 @@ setInterval(paintRoom,10000);
 
 /* ── SCREENSAVER ── */
 function shouldSS(){
-  if(!S||!ACTIVE_ROOM)return false;var t=nowMs();if(t<manualExitUntil)return false;
-  if(S.meetings.some(function(m){return t>=m.startMs&&t<m.endMs;}))return false;
-  if(S.meetings.some(function(m){return m.startMs>t&&(m.startMs-t)<=3600000;}))return false;
-  if(!S.meetings.length)return true;
-  var fut=S.meetings.filter(function(m){return m.endMs>t;});
-  if(!fut.length){var last=Math.max.apply(null,S.meetings.map(function(m){return m.endMs;}));return t>=last+30*60000;}
-  return true;
+  // Screensaver only on SELECT screen (no active room)
+  if(ACTIVE_ROOM)return false;
+  return false;
 }
 function evaluateSS(){shouldSS()?enterSS():exitSS();}
 function enterSS(){if(!ssActive){ssActive=true;$('screensaver').classList.add('active');startSsMat();}}
